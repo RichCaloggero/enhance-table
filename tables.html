@@ -64,13 +64,10 @@ function sortTable (table, sortBy, direction) {
 console.log (`sortTable ${sortBy}, ${direction}`);
 data = extractData (table);
 
-if (direction === "ascending") {
+let compare = (direction === "ascending")? compareAscending : compareDescending;
 data.sort ((a, b) => compare(a[sortBy], b[sortBy]));
-} else {
-data.sort ((b, a) => compare(a[sortBy], b[sortBy]));
-} // if
-
 console.log (data.join(", "));
+
 rewriteData (table, data);
 return data;
 } // sortTable
@@ -94,12 +91,17 @@ function columnIndex (cell) {
 return Array.from(cell.parentElement.children).indexOf(cell);
 } // columnIndex
 
-function compare (a, b) {
-console.log (`comparing ${a} and ${b}`);
+function compareAscending (a, b) {
 if (a < b) return -1;
 else if (a > b) return 1;
 else return 0;
-} // compare
+} // compareAscending
+
+function compareDescending (a, b) {
+if (a < b) return 1;
+else if (a > b) return -1;
+else return 0;
+} // compareDescending
 
 } // makeSortable
 </script>
