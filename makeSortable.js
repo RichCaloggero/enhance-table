@@ -18,7 +18,6 @@ let cell = e.target.parentElement;
 if (! cell.tagName.toLowerCase() === "th") return;
 
 let direction = cell.getAttribute ("aria-sort");
-
 if (direction) {
 direction = (direction === "ascending")? "descending" : "ascending";
 } else {
