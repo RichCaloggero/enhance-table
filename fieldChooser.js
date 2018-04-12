@@ -1,34 +1,3 @@
-<!doctype html>
-<html>
-<meta charset="utf-8">
-<title>Test</title>
-<script src="http://code.jquery.com/jquery.min.js"></script>
-</head>
-<body>
-<h1>Test</h1>
-
-<div id="container">
-<button id="openFieldChooser">Field Chooser</button>
-
-<div id="message" aria-live="polite">
-</div>
-</div><!-- container -->
-
-<script>
-"use strict";
-let fieldNames = "name, id, date, eMail, phone, address, active";
-
-$("#openFieldChooser").on ("click", (e) => createFieldChooser (fieldNames, function (names) {
-message (names);
-$(e.target).focus ();
-}) // create
-); // open
-
-function message (text) {
-$("#message").text (text);
-} // message
-
-
 function createFieldChooser (fieldNames, callback) {
 let fieldList;
 if (typeof(fieldNames) === "string" || fieldNames instanceof String)
@@ -129,8 +98,3 @@ return $list.find("button[aria-pressed='true']").get()
 } // getPressed
 } // createFieldChooser
 
-
-</script>
-
-</body>
-</html>

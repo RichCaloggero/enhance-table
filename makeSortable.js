@@ -56,19 +56,6 @@ return data;
 } // sortTable
 
 
-function extractData (table) {
-return Array.from(table.querySelectorAll ("tbody tr"))
-.map (tr => Array.from (tr.querySelectorAll ("td, th"))
-.map (cell => cell.textContent) // map over cells in row
-); // map over rows
-} // extractData
-
-function rewriteData (table, data) {
-Array.from(table.querySelectorAll ("tbody tr"))
-.map ((tr, r) => Array.from (tr.querySelectorAll ("td, th"))
-.map ((cell, c) => cell.textContent = data[r][c]) // map over cells in row
-); // map over rows
-} // rewriteData
 
 function columnIndex (cell) {
 return Array.from(cell.parentElement.children).indexOf(cell);
