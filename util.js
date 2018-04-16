@@ -1,3 +1,22 @@
+function createTable (selector, fieldNames, data) {
+  $("<table><thead><tr></tr></thead><tbody></tbody></table>").appendTo (selector);
+
+let headerRow = d3.select(`${selector} table thead tr`)
+.selectAll ("th").data (fieldNames)
+.enter().append ("th")
+.text (d => d);
+
+let bodyRows = d3.select(`${selector} tbody`)
+.selectAll ("tr").data(data)
+.enter().append ("tr");
+
+let updateColumns = bodyRows.selectAll ("td")
+.data (d => d)
+.enter().append ("td")
+.text (d => d);
+} // createTable
+
+
 function extractData (table) {
 return Array.from(table.querySelectorAll ("tbody tr"))
 .map (tr => Array.from (tr.querySelectorAll ("td, th"))
