@@ -12,8 +12,17 @@ let $fieldChooser = $(`
 </div>
 
 <div class="body">
-<p id="fieldChooser-instructions">
-</p>
+<div id="fieldChooser-instructions">
+To add a field to the active list, click it's name in the available fields list.
+To remove it from the active list, click it's name again in the availabel list.
+</p><p>
+To change order of fields:
+</p><ol><li>
+click the field name you want to reposition in the active list
+</li><li>
+click another active field to move it <em>before</em> that one
+</li></ol>
+</div>
 
 <div class="available">
 <button class="clear">Clear</button>

@@ -29,7 +29,8 @@
 <script src="jquery.min.js"></script>
 <script src="d3.min.js"></script>
 <script src="util.js"></script>
-<script src="makeSortable.jquery.js"></script>
+<script src="fieldChooser.js"></script>
+<script src="enhanceTable.jquery.js"></script>
 
 <script>
 let fields = ["number", "English"];
@@ -39,23 +40,10 @@ let data = [
 [2, "two"]
 ];
 
-$("table").each (function () {
-function Foo (x) {
-console.log ("Foo: x = ", x);
-this.x = x;
-this.bar();
-} // foo
-
-Foo.prototype.bar = function () {
-console.log ("bar: this.x = ", this.x);
-}; // bar
-
-new Foo(this);
-}); // each
 
 
 createTable ("#numbers", fields, data);
-$("table").sortable ();
+$("table").enhanceTable();
 
 </script>
 
