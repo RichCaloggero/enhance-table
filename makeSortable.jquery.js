@@ -21,7 +21,6 @@ var defaults = {
 // The actual plugin constructor
 function Plugin ( element, options ) {
 this.element = element;
-console.log ("Plugin element: ", this.element, element instanceof Array);
 
 // jQuery has an extend method which merges the contents of two or
 // more objects, storing the result in the first object. The first object
@@ -31,7 +30,7 @@ this.settings = $.extend( {}, defaults, options );
 this._defaults = defaults;
 this._name = pluginName;
 this.init();
-}
+} // Plugin
 
 // Avoid Plugin.prototype conflicts
 $.extend( Plugin.prototype, {
@@ -45,11 +44,10 @@ init: function() {
 // call them like the example below
 makeSortable (this.element);
 }, // init
-
 }); // extend prototype
 
-function makeSortable (..._table) {
-let table = _table[0];
+
+function makeSortable (table) {
 if (!isDomNode(table)) {
 throw("makeSortable requires a DOM node as first argument");
 return;
@@ -129,8 +127,6 @@ if (a < b) return 1;
 else if (a > b) return -1;
 else return 0;
 } // compareDescending
-
-
 
 function isDomNode (x) {return HTMLElement && x instanceof HTMLElement;}
 } // makeSortable
