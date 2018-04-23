@@ -1,5 +1,5 @@
 function createTable (selector, fieldNames, data) {
-  $("<table><thead><tr></tr></thead><tbody></tbody></table>").appendTo (selector);
+  $(selector).html('<table><thead><tr></tr></thead><tbody></tbody></table>');
 
 let headerRow = d3.select(`${selector} table thead tr`)
 .selectAll ("th").data (fieldNames)
@@ -50,7 +50,7 @@ fieldNames.map (key => object[key])
 ); // map over data
 } // createOrderedData 
 
-let names = "a b c d e f g".split(" ");
+/*let names = "a b c d e f g".split(" ");
 let newOrdering = "b c a d g e f".split(" ")
 let data = [
 [1,2,3,4,5,6,7],
@@ -59,4 +59,5 @@ let data = [
 
 let store = createUnorderedDataStore (data, names);
 let newData = createOrderedData (store, newOrdering);
+*/
 
