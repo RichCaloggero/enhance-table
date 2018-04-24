@@ -1,5 +1,7 @@
 function createTable (selector, fieldNames, data) {
-  $(selector).html('<table><thead><tr></tr></thead><tbody></tbody></table>');
+  let tableStructure = '<thead><tr></tr></thead><tbody></tbody>';
+if (selector instanceof HTMLTableElement) $(selector).html(tableStructure);
+else $(selector).html('<table>' + tableStructure + '</table>');
 
 let headerRow = d3.select(`${selector} table thead tr`)
 .selectAll ("th").data (fieldNames)

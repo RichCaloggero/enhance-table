@@ -46,7 +46,7 @@ init: function() {
 // call them like the example below
 
 if (this.settings.sortable) this.makeSortable ();
-
+if (this.settings.enableFieldChooser) this.makeFieldChooser ();
 }, // init
 
 
@@ -133,7 +133,29 @@ else return 0;
 } // compareDescending
 
 function isDomNode (x) {return HTMLElement && x instanceof HTMLElement;}
-}}); // extend prototype // makeSortable
+}, // makeSortable
+
+makeFieldChooser: function () {
+let table = this.element;
+let fieldNames = extractFieldNames (table);
+let data = extractData (table);
+let dataStore = createUnorderedDataStore (data, fieldNames);
+
+let $fieldChooserLauncher = $('<tr><td><button class="fieldChooser">Choose Fields</button></td></tr>');
+$("tbody", table).append ($fieldChooserLauncher);
+
+$fieldChooserLauncher.on ("click", function () {
+createFieldChooser(fieldNames, function (newFieldNames) {
+fieldNames = newFieldNames;
+data = createOrderedData (dataStore, fieldNames);
+$(table).empty ();
+createTable (table, fieldNames, data);
+$("tbody", table).append ($fieldChooserLauncher);
+}); // createFieldChooser
+}); // click $fieldChooserLauncher
+} // makeFieldChooser
+
+}); // extend prototype // makeSortable
 
 
 

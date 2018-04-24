@@ -37,6 +37,7 @@ click another active field to move it <em>before</em> that one
 </div><!-- .body -->
 </div><!-- .fieldChooser -->
 `); // dialog
+
 $fieldChooser.appendTo (document.querySelector("body"));
 $(".close", $fieldChooser).focus ();
 
