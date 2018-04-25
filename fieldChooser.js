@@ -70,7 +70,7 @@ alert ("Please activate at least one field, or cancel this operation.");
 }); // apply
 
 $available.on ("click", (e) => {
-toggleField ($(e.target));
+toggleActive ($(e.target));
 return false;
 }); // click on $available
 
@@ -132,10 +132,15 @@ function getFieldNames ($fields) {
 return $fields.map ((i, element) => $(element).text()).get();
 } // getFieldNames
 
-function toggleField ($field) {
-togglePressed ($field);
+function toggleActive ($button) {
+togglePressed ($button);
+if ($button.is ("[aria-pressed='true']")) {
+$button.css ("drop-shadow", "inset");
+} else {
+$button.css ("drop-shadow", "none");
+} // if
 refreshActiveList ();
-} // toggleField
+} // toggleActive
 
 function activateField ($field) {
 $("[aria-pressed]", $field).attr ("aria-pressed", "true");
