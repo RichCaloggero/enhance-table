@@ -141,16 +141,20 @@ let fieldNames = extractFieldNames (table);
 let data = extractData (table);
 let dataStore = createUnorderedDataStore (data, fieldNames);
 
-let $fieldChooserLauncher = $('<tr><td><button class="fieldChooser">Choose Fields</button></td></tr>');
-$("tbody", table).append ($fieldChooserLauncher);
+let $fieldChooserLauncher = $(`<tr><td colspan="${fieldNames.length}"><button class="fieldChooser">Choose Fields</button></td></tr>`);
+$("thead", table).prepend($fieldChooserLauncher);
 
 $fieldChooserLauncher.on ("click", function () {
 createFieldChooser(fieldNames, function (newFieldNames) {
+if (newFieldNames) {
 fieldNames = newFieldNames;
 data = createOrderedData (dataStore, fieldNames);
 $(table).empty ();
 createTable (table, fieldNames, data);
-$("tbody", table).append ($fieldChooserLauncher);
+$("thead", table).prepend($fieldChooserLauncher);
+} // if
+
+$(table).find ($fieldChooserLauncher).find("button").focus ();
 }); // createFieldChooser
 }); // click $fieldChooserLauncher
 } // makeFieldChooser

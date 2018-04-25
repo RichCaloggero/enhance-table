@@ -1,14 +1,19 @@
 function createTable (selector, fieldNames, data) {
-  let tableStructure = '<thead><tr></tr></thead><tbody></tbody>';
-if (selector instanceof HTMLTableElement) $(selector).html(tableStructure);
-else $(selector).html('<table>' + tableStructure + '</table>');
+let tableStructure = '<thead><tr></tr></thead><tbody></tbody>';
+let table = (selector instanceof String || typeof(selector) === "string")?
+document.querySelector (selector)
+: selector;
+if (table instanceof HTMLTableElement) table.innerHTML = tableStructure;
+else table.innerHTML = '<table>' + tableStructure + '</table>';
 
-let headerRow = d3.select(`${selector} table thead tr`)
+let headerRow = d3.select(table)
+.select("thead tr")
 .selectAll ("th").data (fieldNames)
 .enter().append ("th")
 .text (d => d);
 
-let bodyRows = d3.select(`${selector} tbody`)
+let bodyRows = d3.select(table)
+.select("tbody")
 .selectAll ("tr").data(data)
 .enter().append ("tr");
 
@@ -47,6 +52,7 @@ return object;
 } // createUnorderedDataStore 
 
 function createOrderedData (store, fieldNames) {
+if (!store || !fieldNames) return [];
 return store.map (object =>
 fieldNames.map (key => object[key])
 ); // map over data
