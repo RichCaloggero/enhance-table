@@ -8,7 +8,7 @@ let $fieldChooser = $(`
 <div class="fieldChooser" role="dialog" aria-labelledby="fieldChooser-title" aria-describedby="fieldChooser-instructions">
 <div class="head">
 <h2 id="fieldChooser-title">Field Chooser</h2>
-<button class="close" aria-label="close">X</button>
+<button class="cancel">Cancel</button>
 </div>
 
 <div class="body">
@@ -24,12 +24,12 @@ click another active field to move it <em>before</em> that one
 </li></ol>
 </div>
 
-<div class="available">
-<button class="clear">Clear</button>
+<div class="available" role="region" aria-label="Available Fields">
+<button class="reset">Reset</button>
 <ul class="fields list"></ul>
 </div>
 
-<div class="active">
+<div class="active" role="region" aria-label="Active Fields">
 <ul class="fields list"></ul>
 </div>
 
@@ -39,27 +39,38 @@ click another active field to move it <em>before</em> that one
 `); // dialog
 
 $fieldChooser.appendTo (document.querySelector("body"));
-$(".close", $fieldChooser).focus ();
 
 let $available = $(".available", $fieldChooser);
 let $active = $(".active", $fieldChooser);
-
-$(".close", $fieldChooser).on ("click", () => {
-callback("")
-$fieldChooser.remove ();
-}); // close / cancel
+let $cancel = $(".cancel", $fieldChooser);
+let $reset = $(".reset", $fieldChooser);
+let $apply = $(".apply", $fieldChooser);
 
 $(".list", $available).append (createListItems (fieldList, '<button aria-pressed="false"></button>'));
+activateAllFields ();
+$cancel.focus ();
+
+$reset.on ("click", () => {
+activateAllFields ();
+}); // reset
+
+$cancel.on ("click", function () {
+callback (getFieldNames(availableFields()));
+$fieldChooser.remove ();
+}); // cancel
+
+$apply.on ("click", () => {
+let names = getFieldNames(activeFields());
+if (names) {
+callback (names);
+$fieldChooser.remove();
+} else {
+alert ("Please activate at least one field, or cancel this operation.");
+} // if
+}); // apply
 
 $available.on ("click", (e) => {
-let $activeFields = $(".list", $active);
-let $field = $(e.target);
-togglePressed ($field);
-
-$activeFields.empty ()
-.append (createListItems (
-$(".list [aria-pressed='true']", $available).map((i,x) => x.textContent).get(),
-'<button></button>')); // append
+toggleField ($(e.target));
 return false;
 }); // click on $available
 
@@ -79,10 +90,71 @@ $from.insertBefore ($to);
 } // move
 }); // click on $active
 
-$(".apply", $fieldChooser).on ("click", () => {
-callback ($(".list button", $active).map ((i, x) => x.textContent).get());
-$fieldChooser.remove();
-}); // apply
+
+// keyboard shortcuts
+
+$fieldChooser.on ("keyup", (e) => {
+switch (e.key) {
+case "Escape": return $cancel.trigger ("click");
+case "Enter": return $apply.trigger ("click");
+} // switch
+
+return true;
+}); // keyup
+
+// helpers
+
+
+function refreshActiveList () {
+let $activeFieldList = $(".list", $active);
+
+$activeFieldList.empty ().append (
+createListItems (
+getFieldNames(availableFields().has("[aria-pressed='true']")),
+'<button></button>'
+) // createListItems
+); // append
+} // refreshActiveList
+
+function activeFields () {
+return getFields ($active);
+} // getActiveFields
+
+function availableFields () {
+return getFields ($available);
+} // getAvailableFields
+
+function getFields ($pane) {
+return $pane.find (".list li");
+} // getFields
+
+function getFieldNames ($fields) {
+return $fields.map ((i, element) => $(element).text()).get();
+} // getFieldNames
+
+function toggleField ($field) {
+togglePressed ($field);
+refreshActiveList ();
+} // toggleField
+
+function activateField ($field) {
+$("[aria-pressed]", $field).attr ("aria-pressed", "true");
+refreshActiveList ();
+} // activateField
+
+function deactivateField ($field) {
+$field.attr ("aria-pressed", "false");
+refreshActiveList ();
+} // deactivateField
+
+function activateAllFields () {
+availableFields().each (function () {
+activateField ($(this));
+}); // each available field
+} // activateAllFields
+
+
+
 
 function togglePressed ($button) {
 $button.attr ("aria-pressed",

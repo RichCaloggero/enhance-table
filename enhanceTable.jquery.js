@@ -57,7 +57,7 @@ throw("makeSortable requires a DOM node as first argument");
 return;
 } // if
 
-let headerRow = table.querySelector (`tr.${this.settings.sortableHeaderRowClass}`) || table.querySelector ("tr");
+let headerRow = table.querySelector (`tr.${this.settings.sortableHeaderRowClass}`) || table.querySelector ("tr th").parentElement || null;
 if (! headerRow) {
 throw ("invalid table, must contain at least 1 'tr' element");
 return;
@@ -136,6 +136,7 @@ function isDomNode (x) {return HTMLElement && x instanceof HTMLElement;}
 }, // makeSortable
 
 makeFieldChooser: function () {
+let _this = this;
 let table = this.element;
 let fieldNames = extractFieldNames (table);
 let data = extractData (table);
@@ -144,19 +145,25 @@ let dataStore = createUnorderedDataStore (data, fieldNames);
 let $fieldChooserLauncher = $(`<tr><td colspan="${fieldNames.length}"><button class="fieldChooser">Choose Fields</button></td></tr>`);
 $("thead", table).prepend($fieldChooserLauncher);
 
-$fieldChooserLauncher.on ("click", function () {
-createFieldChooser(fieldNames, function (newFieldNames) {
+$fieldChooserLauncher.on ("click", launchFieldChooser);
+
+function launchFieldChooser () {
+createFieldChooser(fieldNames, (newFieldNames) => {
+
 if (newFieldNames) {
+console.log ("new field names found -- refreshing table");
 fieldNames = newFieldNames;
 data = createOrderedData (dataStore, fieldNames);
 $(table).empty ();
 createTable (table, fieldNames, data);
 $("thead", table).prepend($fieldChooserLauncher);
+if (_this.settings.sortable) _this.makeSortable ();
+$fieldChooserLauncher.on ("click", launchFieldChooser);
 } // if
 
 $(table).find ($fieldChooserLauncher).find("button").focus ();
 }); // createFieldChooser
-}); // click $fieldChooserLauncher
+} // launchFieldChooser
 } // makeFieldChooser
 
 }); // extend prototype // makeSortable
