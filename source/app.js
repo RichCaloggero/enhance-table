@@ -1,5 +1,5 @@
-let $ = require ("./jquery.bundle.js");
-let jQuery = $;
+let $ = require ("jquery");
+let enhanceTable = require ("./enhanceTable.jquery.js");
 let util = require ("./util.js");
 let fields = ["musician", "instrument", "genre"];
 let data = [

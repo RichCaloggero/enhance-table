@@ -4,7 +4,6 @@
 ;( function( $, window, document, undefined ) {
 "use strict";
 let createFieldChooser = require ("./fieldChooser.js");
-let makeSortable = require ("./makeSortable.js");
 
 // undefined is used here as the undefined global variable in ECMAScript 3 is
 // mutable (ie. it can be changed by someone else). undefined isn't really being
