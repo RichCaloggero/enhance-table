@@ -1,7 +1,10 @@
+
 // the semi-colon before function invocation is a safety net against concatenated
 // scripts and/or other plugins which may not be closed properly.
 ;( function( $, window, document, undefined ) {
 "use strict";
+let createFieldChooser = require ("./fieldChooser.js");
+let makeSortable = require ("./makeSortable.js");
 
 // undefined is used here as the undefined global variable in ECMAScript 3 is
 // mutable (ie. it can be changed by someone else). undefined isn't really being
@@ -13,9 +16,11 @@
 // minified (especially when both are regularly referenced in your plugin).
 
 // Create the defaults once
-var pluginName = "sortable";
+var pluginName = "enhanceTable";
 var defaults = {
-
+sortable: true,
+enableFieldChooser: true,
+sortableHeaderRowClass: "sortable",
 }; // defaults
 
 // The actual plugin constructor
@@ -42,20 +47,22 @@ init: function() {
 // and this.settings
 // you can add more functions like the one below and
 // call them like the example below
-makeSortable (this.element);
+
+if (this.settings.sortable) this.makeSortable ();
+if (this.settings.enableFieldChooser) this.makeFieldChooser ();
 }, // init
-}); // extend prototype
 
 
-function makeSortable (table) {
+makeSortable: function makeSortable () {
+let table = this.element;
 if (!isDomNode(table)) {
 throw("makeSortable requires a DOM node as first argument");
 return;
 } // if
 
-let headerRow = table.querySelector ("tr.sort") || table.querySelector ("tr");
+let headerRow = table.querySelector (`tr.${this.settings.sortableHeaderRowClass}`) || table.querySelector ("tr th").parentElement || null;
 if (! headerRow) {
-alert ("invalid table, must contain at least 1 'tr' element");
+throw ("invalid table, must contain at least 1 'tr' element");
 return;
 } // if
 
@@ -129,7 +136,40 @@ else return 0;
 } // compareDescending
 
 function isDomNode (x) {return HTMLElement && x instanceof HTMLElement;}
-} // makeSortable
+}, // makeSortable
+
+makeFieldChooser: function () {
+let _this = this;
+let table = this.element;
+let fieldNames = extractFieldNames (table);
+let data = extractData (table);
+let dataStore = createUnorderedDataStore (data, fieldNames);
+
+let $fieldChooserLauncher = $(`<tr><td colspan="${fieldNames.length}"><button class="fieldChooser">Choose Fields</button></td></tr>`);
+$("thead", table).prepend($fieldChooserLauncher);
+
+$fieldChooserLauncher.on ("click", launchFieldChooser);
+
+function launchFieldChooser () {
+createFieldChooser(fieldNames, (newFieldNames) => {
+
+if (newFieldNames) {
+console.log ("new field names found -- refreshing table");
+fieldNames = newFieldNames;
+data = createOrderedData (dataStore, fieldNames);
+$(table).empty ();
+createTable (table, fieldNames, data);
+$("thead", table).prepend($fieldChooserLauncher);
+if (_this.settings.sortable) _this.makeSortable ();
+$fieldChooserLauncher.on ("click", launchFieldChooser);
+} // if
+
+$(table).find ($fieldChooserLauncher).find("button").focus ();
+}); // createFieldChooser
+} // launchFieldChooser
+} // makeFieldChooser
+
+}); // extend prototype // makeSortable
 
 
 
@@ -144,4 +184,4 @@ $.data( this, "plugin_" + pluginName, new Plugin( this, options ) );
 }); // each
 }; // plugin wrapper
 
-} )( jQuery, window, document );
+} )( window.jQuery, window, document );

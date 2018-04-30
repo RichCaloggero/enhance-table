@@ -1,3 +1,4 @@
+module.exports = createFieldChooser;
 function createFieldChooser (fieldNames, callback) {
 let fieldList;
 if (typeof(fieldNames) === "string" || fieldNames instanceof String)

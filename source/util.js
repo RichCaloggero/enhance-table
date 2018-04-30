@@ -1,3 +1,5 @@
+let d3 = require ("./d3.min.js");
+module.exports.createTable = createTable;
 function createTable (selector, fieldNames, data) {
 let tableStructure = '<thead><tr></tr></thead><tbody></tbody>';
 let table = (selector instanceof String || typeof(selector) === "string")?
@@ -24,6 +26,7 @@ let updateColumns = bodyRows.selectAll ("td")
 } // createTable
 
 
+module.exports.extractData = extractData;
 function extractData (table) {
 return Array.from(table.querySelectorAll ("tbody tr"))
 .map (tr => Array.from (tr.querySelectorAll ("td, th"))
@@ -31,6 +34,7 @@ return Array.from(table.querySelectorAll ("tbody tr"))
 ); // map over rows
 } // extractData
 
+module.exports.rewriteData = rewriteData;
 function rewriteData (table, data) {
 Array.from(table.querySelectorAll ("tbody tr"))
 .map ((tr, r) => Array.from (tr.querySelectorAll ("td, th"))
@@ -38,11 +42,12 @@ Array.from(table.querySelectorAll ("tbody tr"))
 ); // map over rows
 } // rewriteData
 
+module.exports.extractFieldNames = extractFieldNames;
 function extractFieldNames (table) {
 return Array.from(table.querySelectorAll ("thead > tr > th"))
 .map (cell => cell.textContent);
 } // extractFieldNames
-
+module.exports.createUnorderedDataStore = createUnorderedDataStore;
 function createUnorderedDataStore (data, fieldNames) {
 return data.map (row => {
 let object = {};
@@ -51,6 +56,7 @@ return object;
 }); // map over rows
 } // createUnorderedDataStore 
 
+module.exports.createOrderedData = createOrderedData;
 function createOrderedData (store, fieldNames) {
 if (!store || !fieldNames) return [];
 return store.map (object =>
