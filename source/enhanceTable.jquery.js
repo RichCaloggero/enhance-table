@@ -1,3 +1,6 @@
+let util = require ("./util.js");
+let jQuery = require ("jQuery");
+module.exports = jQuery;
 
 // the semi-colon before function invocation is a safety net against concatenated
 // scripts and/or other plugins which may not be closed properly.
@@ -101,7 +104,7 @@ cell.setAttribute ("aria-sort", "");
 
 
 function sortTable (table, sortBy, direction) {
-let data = extractData (table);
+let data = util.extractData (table);
 
 let compare = (direction === "ascending")? compareAscending : compareDescending;
 data.sort ((a, b) => compare(a[sortBy], b[sortBy]));
@@ -140,9 +143,9 @@ function isDomNode (x) {return HTMLElement && x instanceof HTMLElement;}
 makeFieldChooser: function () {
 let _this = this;
 let table = this.element;
-let fieldNames = extractFieldNames (table);
-let data = extractData (table);
-let dataStore = createUnorderedDataStore (data, fieldNames);
+let fieldNames = util.extractFieldNames (table);
+let data = util.extractData (table);
+let dataStore = util.createUnorderedDataStore (data, fieldNames);
 
 let $fieldChooserLauncher = $(`<tr><td colspan="${fieldNames.length}"><button class="fieldChooser">Choose Fields</button></td></tr>`);
 $("thead", table).prepend($fieldChooserLauncher);
@@ -155,9 +158,9 @@ createFieldChooser(fieldNames, (newFieldNames) => {
 if (newFieldNames) {
 console.log ("new field names found -- refreshing table");
 fieldNames = newFieldNames;
-data = createOrderedData (dataStore, fieldNames);
+data = util.createOrderedData (dataStore, fieldNames);
 $(table).empty ();
-createTable (table, fieldNames, data);
+util.createTable (table, fieldNames, data);
 $("thead", table).prepend($fieldChooserLauncher);
 if (_this.settings.sortable) _this.makeSortable ();
 $fieldChooserLauncher.on ("click", launchFieldChooser);
@@ -183,4 +186,4 @@ $.data( this, "plugin_" + pluginName, new Plugin( this, options ) );
 }); // each
 }; // plugin wrapper
 
-} )( window.jQuery, window, document );
+} )( jQuery, window, document );

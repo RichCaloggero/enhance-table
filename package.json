@@ -3,9 +3,9 @@
   "version": "1.0.0",
   "description": "",
   "private": true,
-  "main": "enhanceTable.js",
+  "main": "app.js",
   "scripts": {
-    "build": "webpack"
+    "build": "webpack -p"
   },
   "keywords": [],
   "author": "",
@@ -17,6 +17,7 @@
   },
   "devDependencies": {
     "webpack": "^4.6.0",
+    "webpack-bundle-analyzer": "^2.11.1",
     "webpack-cli": "^2.1.2"
   }
 }

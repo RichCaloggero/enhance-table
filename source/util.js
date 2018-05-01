@@ -1,4 +1,5 @@
-let d3 = require ("./d3.min.js");
+let d3 = require ("d3");
+
 module.exports.createTable = createTable;
 function createTable (selector, fieldNames, data) {
 let tableStructure = '<thead><tr></tr></thead><tbody></tbody>';
@@ -47,6 +48,7 @@ function extractFieldNames (table) {
 return Array.from(table.querySelectorAll ("thead > tr > th"))
 .map (cell => cell.textContent);
 } // extractFieldNames
+
 module.exports.createUnorderedDataStore = createUnorderedDataStore;
 function createUnorderedDataStore (data, fieldNames) {
 return data.map (row => {
