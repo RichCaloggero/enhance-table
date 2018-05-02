@@ -1,12 +1,10 @@
-let util = require ("./util.js");
-let jQuery = require ("jQuery");
-module.exports = jQuery;
+import * as util from "./util.js";
+import { createFieldChooser } from "./fieldChooser.js";
 
 // the semi-colon before function invocation is a safety net against concatenated
 // scripts and/or other plugins which may not be closed properly.
 ;( function( $, window, document, undefined ) {
 "use strict";
-let createFieldChooser = require ("./fieldChooser.js");
 
 // undefined is used here as the undefined global variable in ECMAScript 3 is
 // mutable (ie. it can be changed by someone else). undefined isn't really being

@@ -5,7 +5,8 @@
   "private": true,
   "main": "app.js",
   "scripts": {
-    "build": "webpack -p"
+    "build": "browserify source-browserify/app.js -o dist/app.bundle.js",
+"minify": "uglifyjs dist/app.bundle.js -o dist/app.bundle.min.js -m -c"
   },
   "keywords": [],
   "author": "",
