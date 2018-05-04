@@ -5,8 +5,9 @@
   "private": true,
   "main": "app.js",
   "scripts": {
-    "build": "browserify source-browserify/app.js -o dist/app.bundle.js",
-"minify": "uglifyjs dist/app.bundle.js -o dist/app.bundle.min.js -m -c"
+  "watch": "browserify -w source/app.js -o dist/app.bundle.js",
+  "minify": "uglifyjs dist/app.bundle.js -o dist/app.bundle.min.js -m -c",
+  "build": "browserify source/app.js | uglifyjs  -o dist/app.bundle.min.js -m -c"
   },
   "keywords": [],
   "author": "",
