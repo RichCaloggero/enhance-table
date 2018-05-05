@@ -1,7 +1,3 @@
-let util = require ("./util.js");
-let jQuery = require ("jQuery");
-let createFieldChooser = require ("./fieldChooser.js");
-module.exports = jQuery;
 
 // the semi-colon before function invocation is a safety net against concatenated
 // scripts and/or other plugins which may not be closed properly.
