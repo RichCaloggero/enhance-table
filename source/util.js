@@ -66,6 +66,10 @@ fieldNames.map (key => object[key])
 ); // map over data
 } // createOrderedData 
 
+module.exports.isDomNode = isDomNode;
+function isDomNode (x) {return HTMLElement && x instanceof HTMLElement;}
+
+
 /*let names = "a b c d e f g".split(" ");
 let newOrdering = "b c a d g e f".split(" ")
 let data = [
