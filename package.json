@@ -3,11 +3,11 @@
   "version": "1.0.0",
   "description": "",
   "private": true,
-  "main": "app.js",
+  "main": "source/enhanceTable.jquery.js",
   "scripts": {
-    "watch": "watchify  source/app.js -o source/app.bundle.js --debug --verbose",
-    "minify": "watchify  source/app.js --debug --verbose | uglifyjs -o source/app.bundle.min.js -m -c",
-    "build": "browserify source/app.js | uglifyjs  -o dist/app.bundle.min.js -m -c",
+    "watch": "watchify  source/demo.js -o source/demo.bundle.js --debug --verbose",
+    "build-demo-bundle": "browserify source/demo.js | uglifyjs -o dist/demo.bundle.min.js -m -c",
+    "build": "browserify source/enhanceTable.jquery.js | uglifyjs  -o dist/enhanceTable.jquery.min.js -m -c",
     "standalone": "uglifyjs source-standalone/util.js -o source-standalone/util.min.js -m -c & uglifyjs source-standalone/fieldChooser.js -o source-standalone/fieldChooser.min.js -m -c & uglifyjs source-standalone/enhanceTable.jquery.js -o source-standalone/enhanceTable.jquery.min.js -m -c"
     },
   "keywords": [],

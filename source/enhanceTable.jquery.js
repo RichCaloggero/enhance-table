@@ -1,23 +1,12 @@
-let util = require ("./util.js");
-let jQuery = require ("jQuery");
-let createFieldChooser = require ("./fieldChooser.js");
-let makeTableSortable  = require ("./makeTableSortable.js");
-module.exports = jQuery;
-
-// the semi-colon before function invocation is a safety net against concatenated
-// scripts and/or other plugins which may not be closed properly.
-;( function( $, window, document, undefined ) {
 "use strict";
 
-// undefined is used here as the undefined global variable in ECMAScript 3 is
-// mutable (ie. it can be changed by someone else). undefined isn't really being
-// passed in so we can ensure the value of it is truly undefined. In ES5, undefined
-// can no longer be modified.
+//let jQuery = require ("jQuery");
+let util = require ("./util.js");
+let createFieldChooser = require ("./fieldChooser.js");
+let makeTableSortable  = require ("./makeTableSortable.js");
 
-// window and document are passed through as local variables rather than global
-// as this (slightly) quickens the resolution process and can be more efficiently
-// minified (especially when both are regularly referenced in your plugin).
 
+(function enhanceTable ($ = global.jQuery) {
 // Create the defaults once
 var pluginName = "enhanceTable";
 var defaults = {
@@ -117,5 +106,5 @@ $.data( this, "plugin_" + pluginName, new Plugin( this, options ) );
 } // if
 }); // each
 }; // plugin wrapper
+})(); // enhanceTable // module
 
-} )( jQuery, window, document );

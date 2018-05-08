@@ -10,6 +10,34 @@
 
 <h2>Musicians</h2>
 <div id="musicians">
+<table><thead>
+<tr><th >musician
+</th><th >instrument
+</th><th>genre
+</th>
+</tr>
+</thead><tbody><tr><td>Yoyo Mah
+</td><td>cello
+</td><td>classical
+</td>
+</tr><tr><td>Elvin Jones
+</td><td>drums
+</td><td>jazz
+</td></tr><tr><td>Jerry Garcia
+</td><td>guitar
+</td><td>rock
+</td>
+</tr><tr><td>Rich Caloggero
+</td><td>guitar
+</td><td>jam
+</td>
+</tr><tr><td>Elton John
+</td><td>piano
+</td><td>rock
+</td>
+</tr>
+</tbody>
+</table>
 </div>
 
 
@@ -26,7 +54,13 @@
 <tr><td>Conservative</td><td>1</td></tr>
 </table>
 
-<script src="app.bundle.min.js"></script>
+<script src="jquery.min.js"></script>
+<script src="enhanceTable.jquery.min.js"></script>
+
+<script>
+//enhanceTable ();
+$("table").enhanceTable();
+</script>
 
 </body>
 </html>

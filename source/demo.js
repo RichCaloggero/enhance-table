@@ -1,4 +1,4 @@
-let $ = require ("./enhanceTable.jquery.js");
+let enhanceTable  = require ("./enhanceTable.jquery.js");
 let util = require ("./util.js");
 let fields = ["musician", "instrument", "genre"];
 let data = [
@@ -8,7 +8,6 @@ let data = [
 ["Yoyo Mah", "cello", "classical"],
 ["Rich Caloggero", "guitar", "jam"]
 ];
-
 
 util.createTable ("#musicians", fields, data);
 $("table").enhanceTable();
