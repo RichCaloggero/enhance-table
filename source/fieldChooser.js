@@ -81,9 +81,11 @@ $active.on ("click", (e) => {
 let $pressed = $(".list [aria-pressed='true']", $active);
 if ($pressed.length === 0) {
 $(e.target).attr("aria-pressed", "true");
+setButtonStyle ($(e.target));
 } else if ($pressed.length === 1) {
 move ($pressed, $(e.target));
 $pressed.removeAttr ("aria-pressed");
+setButtonStyle ($pressed);
 } // if
 return;
 
@@ -136,37 +138,49 @@ return $fields.map ((i, element) => $(element).text()).get();
 
 function toggleActive ($button) {
 togglePressed ($button);
+refreshActiveList ();
+} // toggleActive
+
+function setButtonStyle ($button) {
+if (! $button.is ("[aria-pressed]")) {
+console.log ("button ", $button.text(), " not toggle button");
+$button.css ({border: "none", "box-shadow": "unset"});
+} else {
+console.log ("button ", $button.text(), " is a toggle button");
+$button.css ({border: "thin solid gold"});
 if ($button.is ("[aria-pressed='true']")) {
 $button.css ("box-shadow", "inset 5em 1em gold");
 } else {
 $button.css ("box-shadow", "unset");
 } // if
-refreshActiveList ();
-} // toggleActive
+} // if
+} // setButtonStyle
 
+// operations on (a field here is an "li" element containing a button)
 function activateField ($field) {
 $("[aria-pressed]", $field).attr ("aria-pressed", "true");
+setButtonStyle ($("button", $field));
 refreshActiveList ();
 } // activateField
 
 function deactivateField ($field) {
-$field.attr ("aria-pressed", "false");
+$("button", $field).attr ("aria-pressed", "false");
+setButtonStyle ($("button", $field));
 refreshActiveList ();
 } // deactivateField
 
 function activateAllFields () {
 availableFields().each (function () {
 activateField ($(this));
-}); // each available field
+}); // each
 } // activateAllFields
-
-
 
 
 function togglePressed ($button) {
 $button.attr ("aria-pressed",
 $button.attr("aria-pressed") === "true"? "false" : "true"
 );
+setButtonStyle ($button);
 } // togglePressed
 
 function clearPressed ($buttons) {
