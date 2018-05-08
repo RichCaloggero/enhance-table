@@ -64,24 +64,24 @@ return makeTableSortable (table, headerRow);
 makeFieldChooser: function () {
 let _this = this;
 let table = this.element;
-let fieldNames = util.extractFieldNames (table);
-let data = util.extractData (table);
-let dataStore = util.createUnorderedDataStore (data, fieldNames);
+let allFieldNames = util.extractFieldNames (table);
+let initialDataStore = util.createUnorderedDataStore (util.extractData (table), allFieldNames);
+let activeFieldNames = allFieldNames.slice();
 
-let $fieldChooserLauncher = $(`<tr><td colspan="${fieldNames.length}"><button class="fieldChooser">Choose Fields</button></td></tr>`);
+let $fieldChooserLauncher = $(`<tr><td colspan="${allFieldNames.length}"><button class="fieldChooser">Choose Fields</button></td></tr>`);
 $("thead", table).prepend($fieldChooserLauncher);
 
 $fieldChooserLauncher.on ("click", launchFieldChooser);
 
 function launchFieldChooser () {
-createFieldChooser(fieldNames, (newFieldNames) => {
+createFieldChooser(allFieldNames, activeFieldNames, (newFieldNames) => {
 
 if (newFieldNames) {
 //console.log ("new field names found -- refreshing table");
-fieldNames = newFieldNames;
-data = util.createOrderedData (dataStore, fieldNames);
+activeFieldNames = newFieldNames;
+let data = util.createOrderedData (initialDataStore, activeFieldNames);
 $(table).empty ();
-util.createTable (table, fieldNames, data);
+util.createTable (table, activeFieldNames, data);
 $("thead", table).prepend($fieldChooserLauncher);
 if (_this.settings.sortable) _this.makeSortable ();
 $fieldChooserLauncher.on ("click", launchFieldChooser);

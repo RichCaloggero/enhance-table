@@ -1,12 +1,195 @@
 let $ = require ("jQuery");
 module.exports = createFieldChooser;
-function createFieldChooser (fieldNames, callback) {
+function createFieldChooser (fieldNames, activeFieldList, callback) {
 let fieldList;
 if (typeof(fieldNames) === "string" || fieldNames instanceof String)
 fieldList = fieldNames.split(",").map(item => item.trim());
 else fieldList = fieldNames; // assume it's an array
 
-let $fieldChooser = $(`
+if (!activeFieldList) activeFieldList = [];
+
+$fieldChooser = createDialog ();
+$fieldChooser.appendTo (document.querySelector("body"));
+
+let $available = $(".available", $fieldChooser);
+let $active = $(".active", $fieldChooser);
+let $cancel = $(".cancel", $fieldChooser);
+let $reset = $(".reset", $fieldChooser);
+let $apply = $(".apply", $fieldChooser);
+
+$(".list", $available).append (createListItems (fieldList, '<button aria-pressed="false"></button>'));
+initializeActiveFields (activeFieldList);
+$cancel.focus ();
+
+
+
+$reset.on ("click", () => {
+activateAllFields ();
+}); // reset
+
+$cancel.on ("click", function () {
+callback (getFieldNames(availableFields()));
+$fieldChooser.remove ();
+}); // cancel
+
+$apply.on ("click", () => {
+let names = getFieldNames(activeFields());
+console.log ("applying with ", names);
+if (names) {
+callback (names);
+$fieldChooser.remove();
+} else {
+alert ("Please activate at least one field, or cancel this operation.");
+} // if
+}); // apply
+
+$available.on ("click", (e) => {
+toggleActive ($(e.target));
+return false;
+}); // click on $available
+
+$active.on ("click", (e) => {
+// are any pressed
+let $pressed = $(".list [aria-pressed='true']", $active);
+if ($pressed.length === 0) {
+$(e.target).attr("aria-pressed", "true");
+setButtonStyle ($(e.target));
+} else if ($pressed.length === 1) {
+move ($pressed, $(e.target));
+$pressed.attr("aria-pressed", "false");
+setButtonStyle ($pressed);
+} // if
+return;
+
+function move ($from, $to) {
+$from.insertBefore ($to);
+} // move
+}); // click on $active
+
+
+function initializeActiveFields (list) {
+if (! list) return activateAllFields ();
+
+getFields().each (function () {
+if (list.includes($(this).text())) {
+activateField ($(this));
+} // if
+}); // each field in list
+} // initializeActiveFields 
+
+
+
+// keyboard shortcuts
+
+$fieldChooser.on ("keyup", (e) => {
+switch (e.key) {
+case "Escape": return $cancel.trigger ("click");
+case "Enter": return $apply.trigger ("click");
+} // switch
+
+return true;
+}); // keyup
+
+// helpers
+
+
+function refreshActiveList () {
+let $activeFieldList = $(".list", $active);
+
+$activeFieldList.empty ().append (
+createListItems (
+getFieldNames(availableFields().has("[aria-pressed='true']")),
+'<button aria-pressed="false"></button>'
+) // createListItems
+); // append
+} // refreshActiveList
+
+function activeFields () {
+return getFields ($active);
+} // getActiveFields
+
+function availableFields () {
+return getFields ($available);
+} // getAvailableFields
+
+function getFields ($pane) {
+return ($pane || $available).find (".list li");
+} // getFields
+
+function getFieldNames ($fields) {
+return $fields.get().map ((element) => element.textContent);
+} // getFieldNames
+
+
+function activateAllFields () {
+availableFields().each (function () {
+activateField ($(this));
+}); // each
+} // activateAllFields
+
+function activateField ($field) {
+$("button", $field).attr ("aria-pressed", "true");
+setButtonStyle ($("button", $field));
+$(".list", $active).append (createField($field.text()));
+} // activateField
+
+function createField (name) {
+return $(`<li><button aria-pressed="false">${name}</button></li>`);
+} // createField
+
+function deactivateField ($field) {
+$("button", $field).attr ("aria-pressed", "false");
+setButtonStyle ($("button", $field));
+refreshActiveList ();
+} // deactivateField
+
+function toggleActive ($button) {
+togglePressed ($button);
+refreshActiveList ();
+} // toggleActive
+
+function setButtonStyle ($button) {
+if (! $button.is ("[aria-pressed]")) {
+console.log ("button ", $button.text(), " not toggle button");
+$button.css ({border: "none", "box-shadow": "unset"});
+} else {
+console.log ("button ", $button.text(), " is a toggle button");
+$button.css ({border: "thin solid gold"});
+if ($button.is ("[aria-pressed='true']")) {
+$button.css ("box-shadow", "inset 5em 1em gold");
+} else {
+$button.css ("box-shadow", "unset");
+} // if
+} // if
+} // setButtonStyle
+
+
+function togglePressed ($button) {
+$button.attr ("aria-pressed",
+$button.attr("aria-pressed") === "true"? "false" : "true"
+);
+setButtonStyle ($button);
+} // togglePressed
+
+function clearPressed ($buttons) {
+$buttons.attr ("aria-pressed", "false");
+} // clearPressed
+
+function createListItems (list, html, type) {
+return list.map (item => $(`<li>${item}</li>`).wrapInner (html));
+} // createListItems
+
+function getChecked ($list) {
+return $list.find("input").get().filter (x => x.checked).map (item => item.value);
+} // getChecked
+
+function getPressed ($list, indexes) {
+return $list.find("button[aria-pressed='true']").get()
+.map ((item, index) => indexes? index : item.textContent);
+} // getPressed
+
+function createDialog () {
+return $(`
 <div class="fieldChooser" role="dialog" aria-labelledby="fieldChooser-title" aria-describedby="fieldChooser-instructions">
 <div class="head">
 <h2 id="fieldChooser-title">Field Chooser</h2>
@@ -39,165 +222,8 @@ click another active field to move it <em>before</em> that one
 </div><!-- .body -->
 </div><!-- .fieldChooser -->
 `); // dialog
-
-$fieldChooser.appendTo (document.querySelector("body"));
-
-let $available = $(".available", $fieldChooser);
-let $active = $(".active", $fieldChooser);
-let $cancel = $(".cancel", $fieldChooser);
-let $reset = $(".reset", $fieldChooser);
-let $apply = $(".apply", $fieldChooser);
-
-$(".list", $available).append (createListItems (fieldList, '<button aria-pressed="false"></button>'));
-activateAllFields ();
-$cancel.focus ();
-
-$reset.on ("click", () => {
-activateAllFields ();
-}); // reset
-
-$cancel.on ("click", function () {
-callback (getFieldNames(availableFields()));
-$fieldChooser.remove ();
-}); // cancel
-
-$apply.on ("click", () => {
-let names = getFieldNames(activeFields());
-if (names) {
-callback (names);
-$fieldChooser.remove();
-} else {
-alert ("Please activate at least one field, or cancel this operation.");
-} // if
-}); // apply
-
-$available.on ("click", (e) => {
-toggleActive ($(e.target));
-return false;
-}); // click on $available
-
-$active.on ("click", (e) => {
-// are any pressed
-let $pressed = $(".list [aria-pressed='true']", $active);
-if ($pressed.length === 0) {
-$(e.target).attr("aria-pressed", "true");
-setButtonStyle ($(e.target));
-} else if ($pressed.length === 1) {
-move ($pressed, $(e.target));
-$pressed.removeAttr ("aria-pressed");
-setButtonStyle ($pressed);
-} // if
-return;
-
-function move ($from, $to) {
-$from.insertBefore ($to);
-} // move
-}); // click on $active
+} // createDialog
 
 
-// keyboard shortcuts
-
-$fieldChooser.on ("keyup", (e) => {
-switch (e.key) {
-case "Escape": return $cancel.trigger ("click");
-case "Enter": return $apply.trigger ("click");
-} // switch
-
-return true;
-}); // keyup
-
-// helpers
-
-
-function refreshActiveList () {
-let $activeFieldList = $(".list", $active);
-
-$activeFieldList.empty ().append (
-createListItems (
-getFieldNames(availableFields().has("[aria-pressed='true']")),
-'<button></button>'
-) // createListItems
-); // append
-} // refreshActiveList
-
-function activeFields () {
-return getFields ($active);
-} // getActiveFields
-
-function availableFields () {
-return getFields ($available);
-} // getAvailableFields
-
-function getFields ($pane) {
-return $pane.find (".list li");
-} // getFields
-
-function getFieldNames ($fields) {
-return $fields.map ((i, element) => $(element).text()).get();
-} // getFieldNames
-
-function toggleActive ($button) {
-togglePressed ($button);
-refreshActiveList ();
-} // toggleActive
-
-function setButtonStyle ($button) {
-if (! $button.is ("[aria-pressed]")) {
-console.log ("button ", $button.text(), " not toggle button");
-$button.css ({border: "none", "box-shadow": "unset"});
-} else {
-console.log ("button ", $button.text(), " is a toggle button");
-$button.css ({border: "thin solid gold"});
-if ($button.is ("[aria-pressed='true']")) {
-$button.css ("box-shadow", "inset 5em 1em gold");
-} else {
-$button.css ("box-shadow", "unset");
-} // if
-} // if
-} // setButtonStyle
-
-// operations on (a field here is an "li" element containing a button)
-function activateField ($field) {
-$("[aria-pressed]", $field).attr ("aria-pressed", "true");
-setButtonStyle ($("button", $field));
-refreshActiveList ();
-} // activateField
-
-function deactivateField ($field) {
-$("button", $field).attr ("aria-pressed", "false");
-setButtonStyle ($("button", $field));
-refreshActiveList ();
-} // deactivateField
-
-function activateAllFields () {
-availableFields().each (function () {
-activateField ($(this));
-}); // each
-} // activateAllFields
-
-
-function togglePressed ($button) {
-$button.attr ("aria-pressed",
-$button.attr("aria-pressed") === "true"? "false" : "true"
-);
-setButtonStyle ($button);
-} // togglePressed
-
-function clearPressed ($buttons) {
-$buttons.attr ("aria-pressed", "false");
-} // clearPressed
-
-function createListItems (list, html, type) {
-return list.map (item => $(`<li>${item}</li>`).wrapInner (html));
-} // createListItems
-
-function getChecked ($list) {
-return $list.find("input").get().filter (x => x.checked).map (item => item.value);
-} // getChecked
-
-function getPressed ($list, indexes) {
-return $list.find("button[aria-pressed='true']").get()
-.map ((item, index) => indexes? index : item.textContent);
-} // getPressed
 } // createFieldChooser
 
