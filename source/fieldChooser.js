@@ -6,7 +6,7 @@ if (typeof(fieldNames) === "string" || fieldNames instanceof String)
 fieldList = fieldNames.split(",").map(item => item.trim());
 else fieldList = fieldNames; // assume it's an array
 
-if (!activeFieldList) activeFieldList = [];
+if (! activeFieldList) activeFieldList = [];
 
 $fieldChooser = createDialog ();
 $fieldChooser.appendTo (document.querySelector("body"));
@@ -17,7 +17,7 @@ let $cancel = $(".cancel", $fieldChooser);
 let $reset = $(".reset", $fieldChooser);
 let $apply = $(".apply", $fieldChooser);
 
-$(".list", $available).append (createListItems (fieldList, '<button aria-pressed="false"></button>'));
+$(".list", $available).append (createFields (fieldList));
 initializeActiveFields (activeFieldList);
 $cancel.focus ();
 
@@ -50,14 +50,14 @@ return false;
 
 $active.on ("click", (e) => {
 // are any pressed
-let $pressed = $(".list [aria-pressed='true']", $active);
+let $pressed = activeFields().has("[aria-pressed='true']");
 if ($pressed.length === 0) {
 $(e.target).attr("aria-pressed", "true");
 setButtonStyle ($(e.target));
 } else if ($pressed.length === 1) {
-move ($pressed, $(e.target));
-$pressed.attr("aria-pressed", "false");
-setButtonStyle ($pressed);
+move ($pressed, $(e.target).closest(".field"));
+$("button", $pressed).attr("aria-pressed", "false");
+setButtonStyle ($("button", $pressed));
 } // if
 return;
 
@@ -97,10 +97,9 @@ function refreshActiveList () {
 let $activeFieldList = $(".list", $active);
 
 $activeFieldList.empty ().append (
-createListItems (
+createFields(
 getFieldNames(availableFields().has("[aria-pressed='true']")),
-'<button aria-pressed="false"></button>'
-) // createListItems
+) // createFields
 ); // append
 } // refreshActiveList
 
@@ -113,11 +112,15 @@ return getFields ($available);
 } // getAvailableFields
 
 function getFields ($pane) {
-return ($pane || $available).find (".list li");
+let result = ($pane? $pane : $available).find (".list .field");
+console.log ("getFields: ", result);
+return result;
 } // getFields
 
 function getFieldNames ($fields) {
-return $fields.get().map ((element) => element.textContent);
+let result = $fields.get().map ((element) => element.textContent);
+console.log ("fieldnames: ", result);
+return result;
 } // getFieldNames
 
 
@@ -133,14 +136,18 @@ setButtonStyle ($("button", $field));
 $(".list", $active).append (createField($field.text()));
 } // activateField
 
+function createFields (names) {
+return names.map (name => createField(name));
+} // createFields
+
 function createField (name) {
-return $(`<li><button aria-pressed="false">${name}</button></li>`);
+return $(`<li class="field"><button aria-pressed="false">${name}</button></li>`);
 } // createField
 
 function deactivateField ($field) {
 $("button", $field).attr ("aria-pressed", "false");
 setButtonStyle ($("button", $field));
-refreshActiveList ();
+$(`.list .field:contains(${name})`, $active).remove();
 } // deactivateField
 
 function toggleActive ($button) {
@@ -175,9 +182,6 @@ function clearPressed ($buttons) {
 $buttons.attr ("aria-pressed", "false");
 } // clearPressed
 
-function createListItems (list, html, type) {
-return list.map (item => $(`<li>${item}</li>`).wrapInner (html));
-} // createListItems
 
 function getChecked ($list) {
 return $list.find("input").get().filter (x => x.checked).map (item => item.value);
