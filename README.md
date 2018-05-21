@@ -33,3 +33,9 @@ $("table").enhanceTable();
 </script>
 ```
 
+## Developer notes
+
+I started this project to explore whether a field chooser could be made keyboard and screen reader accessible.  It then turned into an exercise in the use of browserify.
+
+In the future I'd like to explore es6 modules and module loading. I briefly looked at rollup and system.js, but seemed a bit overly complicated.   
+
