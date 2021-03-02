@@ -8,7 +8,7 @@
     "watch": "watchify  source/demo.js -o source/demo.bundle.js --debug --verbose",
     "build-demo-bundle": "browserify source/demo.js | uglifyjs -o dist/demo.bundle.min.js -m -c",
     "build": "browserify source/enhanceTable.jquery.js | uglifyjs  -o dist/enhanceTable.jquery.min.js -m -c"
-    },
+  },
   "keywords": [],
   "author": "",
   "license": "ISC",
